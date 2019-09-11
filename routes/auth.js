@@ -2,7 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const User = require('../model/User');
 
-const { registerValidation } = require('../validation');
+const { registerValidation, loginValidation } = require('../validation');
 
 router.post('/register', async (req, res) => {
 
@@ -32,9 +32,23 @@ router.post('/register', async (req, res) => {
   // Attempt to save the created user to DB
   try {
     const savedUser = await user.save();
-    res.send(savedUser);
+    res.send({ user: savedUser._id });
   } catch (error) {
     res.status(400).send(error)    ;
+  }
+});
+
+// Login Route
+router.post('/login', (req, res) => {
+  const { error } = loginValidation(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  // Check if user is already signed up
+  const emailExists = await User.findOne({ email: req.body.email });
+  if (emailExists) {
+    return res.status(400).send(`Email already exists`);
   }
 });
 
