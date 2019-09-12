@@ -4,7 +4,11 @@ const User = require('../model/User');
 
 const { registerValidation, loginValidation } = require('../validation');
 
+// Custom middleware for checking whether email already exists
+const middlewares = require('../middleware/emailCheck');
+
 router.post('/register',
+  middlewares.checkEmail,
   async (req, res) => {
 
   // Validate data before creating a user
@@ -17,30 +21,30 @@ router.post('/register',
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
   
-  // // Create a new user
-  // const user = new User({
-  //   name: req.body.name,
-  //   email: req.body.email,
-  //   password: hashedPassword
-  // });
+  // Create a new user
+  const user = new User({
+    name: req.body.name,
+    email: req.body.email,
+    password: hashedPassword
+  });
 
-  // // Attempt to save the created user to DB
-  // try {
-  //   const savedUser = await user.save();
-  //   res.send({ user: savedUser._id });
-  // } catch (error) {
-  //   res.status(400).send(error)    ;
-  // }
+  // Attempt to save the created user to DB
+  try {
+    const savedUser = await user.save();
+    res.send({ user: savedUser._id });
+  } catch (error) {
+    res.status(400).send(error)    ;
+  }
 });
 
 // Login Route
-// router.post('/login', 
-//   checkEmail,
-//   async (req, res) => {
-//   const { error } = loginValidation(req.body);
-//   if (error) {
-//     return res.status(400).send(error.details[0].message);
-//   }
-// });
+router.post('/login', 
+  middlewares.checkEmail,
+  async (req, res) => {
+  const { error } = loginValidation(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+});
 
 module.exports = router;
