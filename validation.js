@@ -1,9 +1,6 @@
 const Joi = require('@hapi/joi');
 exports = module.exports = {};
 
-/**
- * Validates the name, email, and password provided by the user
- */
 exports.registerValidation = data => {
   const schema = {
     name: Joi
@@ -24,9 +21,6 @@ exports.registerValidation = data => {
   return Joi.validate(data, schema);
 };
 
-/**
- * Validates the email and password provided by the user
- */
 exports.loginValidation = data => {
   const schema = {
   email: Joi

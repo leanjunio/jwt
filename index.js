@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const validation = require('./middleware/checkIfUserExists');
 const app = express();
 
 // Import Routes
@@ -17,7 +16,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
  
 // parse application/json
 app.use(bodyParser.json());
-app.use(validation.test);
 
 // Route middlewares
 app.use('/api/user', authRoute);
