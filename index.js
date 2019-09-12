@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
 
+// middlewares
+const middlewares = require('./middleware/emailCheck');
+
 // Import Routes
 const authRoute = require('./routes/auth');
 
@@ -16,6 +19,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
  
 // parse application/json
 app.use(bodyParser.json());
+
+// custom middlewares
+app.use(middlewares.checkEmail);
+
 
 // Route middlewares
 app.use('/api/user', authRoute);
